@@ -2,7 +2,7 @@
 
 AI服务后端 - 基于Cloudflare Worker的DeepSeek API代理服务，为AI聊天应用提供安全、高效的后端支持。
 
-![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-orange) ![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue) ![DeepSeek](https://img.shields.io/badge/DeepSeek-API-green) ![Zero Config](https://img.shields.io/badge/Zero%20Config-✅-brightgreen)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers-orange) ![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue) ![DeepSeek](https://img.shields.io/badge/DeepSeek-API-green) ![pnpm](https://img.shields.io/badge/pnpm-8.15.0-yellow)
 
 ## ✨ 特性
 
@@ -12,9 +12,14 @@ AI服务后端 - 基于Cloudflare Worker的DeepSeek API代理服务，为AI聊�
 - 🌐 **CORS支持** - 完善的跨域处理
 - 🛡️ **错误处理** - 详细的错误信息和状态码
 - ⚡ **高性能** - 边缘计算，毫秒级响应
+- 📦 **pnpm优化** - 更快的安装速度，更少的磁盘占用
 - 🔧 **易部署** - 一键部署到Cloudflare
 
 ## 🚀 快速开始
+
+### 环境要求
+- Node.js >= 18.0.0
+- pnpm >= 8.0.0 (推荐) 或 npm/yarn
 
 ### 1. 克隆项目
 
@@ -26,7 +31,14 @@ cd ai-service
 ### 2. 安装依赖
 
 ```bash
+# 使用 pnpm (推荐)
+pnpm install
+
+# 或使用 npm
 npm install
+
+# 或使用 yarn
+yarn install
 ```
 
 ### 3. 配置环境变量
@@ -42,13 +54,45 @@ wrangler secret put ALLOWED_ORIGINS
 ### 4. 本地开发
 
 ```bash
+# 使用 pnpm
+pnpm dev
+
+# 或使用 npm
 npm run dev
 ```
 
 ### 5. 部署到生产环境
 
 ```bash
+# 使用 pnpm
+pnpm deploy
+
+# 或使用 npm
 npm run deploy
+```
+
+## 📦 pnpm 优势
+
+### 🚀 性能优化
+- **3倍更快的安装速度** - 硬链接和符号链接技术
+- **节省70%磁盘空间** - 全局存储去重
+- **更快的CI/CD** - 减少安装时间
+
+### 🔒 更安全的依赖管理
+- **严格的依赖隔离** - 防止幽灵依赖
+- **精确的版本控制** - lockfile更准确
+- **更好的monorepo支持** - 工作空间管理
+
+### 📋 可用脚本
+
+```bash
+pnpm dev           # 本地开发服务器
+pnpm deploy        # 部署到生产环境
+pnpm type-check    # TypeScript类型检查
+pnpm lint          # 代码质量检查
+pnpm format        # 代码格式化
+pnpm clean         # 清理构建文件
+pnpm build         # 构建检查（dry-run）
 ```
 
 ## 🔧 配置
@@ -59,6 +103,22 @@ npm run deploy
 |--------|------|------|------|
 | `DEEPSEEK_API_KEY` | ✅ | DeepSeek API密钥 | `sk-xxx...` |
 | `ALLOWED_ORIGINS` | ❌ | 允许的域名列表 | `https://yourdomain.com,https://localhost:3000` |
+
+### pnpm 配置优化
+
+项目已配置 `.npmrc` 文件进行 pnpm 优化：
+
+```ini
+# 严格的依赖管理
+strict-peer-dependencies=false
+node-linker=isolated
+auto-install-peers=true
+
+# 性能优化
+resolution-mode=highest
+package-import-method=auto
+verify-store-integrity=true
+```
 
 ## 📡 API 使用
 
@@ -135,24 +195,40 @@ const sendMessageToAPI = async (message: string): Promise<string> => {
 
 ```
 ai-service/
-├── src/
-│   └── index.ts          # Worker主代码
+├── src/index.ts          # Worker主代码
 ├── wrangler.toml         # Cloudflare配置
-├── package.json          # 依赖配置
+├── package.json          # 项目依赖 (pnpm优化)
+├── .npmrc               # pnpm配置文件
 ├── tsconfig.json         # TypeScript配置
 ├── .eslintrc.json        # ESLint配置
-└── .prettierrc           # Prettier配置
+├── .prettierrc           # Prettier配置
+├── DEPLOYMENT.md         # 详细部署指南
+└── README.md            # 项目文档
 ```
 
-### 可用脚本
+### 开发工作流
 
 ```bash
-npm run dev           # 本地开发服务器
-npm run deploy        # 部署到生产环境
-npm run tail          # 查看实时日志
-npm run type-check    # TypeScript类型检查
-npm run lint          # 代码质量检查
-npm run format        # 代码格式化
+# 1. 安装依赖
+pnpm install
+
+# 2. 类型检查
+pnpm type-check
+
+# 3. 代码检查
+pnpm lint
+
+# 4. 格式化代码
+pnpm format
+
+# 5. 本地开发
+pnpm dev
+
+# 6. 部署检查
+pnpm build
+
+# 7. 部署到生产
+pnpm deploy
 ```
 
 ## 🛡️ 安全
@@ -177,7 +253,7 @@ wrangler secret put ALLOWED_ORIGINS
 
 ```bash
 # 查看生产环境日志
-npm run tail
+pnpm tail
 
 # 查看详细日志
 wrangler tail --format pretty
@@ -187,7 +263,25 @@ wrangler tail --format pretty
 
 ```bash
 # 一键部署到生产环境
-npm run deploy
+pnpm deploy
+
+# 部署到特定环境
+pnpm deploy:prod
+```
+
+## 🔄 迁移到 pnpm
+
+如果你之前使用的是 npm 或 yarn：
+
+```bash
+# 删除旧的 lock 文件
+rm package-lock.json yarn.lock
+
+# 删除 node_modules
+rm -rf node_modules
+
+# 使用 pnpm 重新安装
+pnpm install
 ```
 
 ## 🤝 贡献
@@ -205,4 +299,4 @@ MIT License
 
 ---
 
-**让AI服务触手可及！** 🚀
+**让AI服务触手可及！使用pnpm享受更快的开发体验！** 🚀
