@@ -26,6 +26,7 @@ interface ChatResponse {
   status: 'success' | 'error';
   timestamp: string;
   error?: string;
+  errorType?: string;
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -61,11 +62,20 @@ interface DeepSeekResponse {
   };
 }
 
+interface DeepSeekErrorResponse {
+  error: {
+    message: string;
+    type: string;
+    code: string;
+  };
+}
+
 class DeepSeekError extends Error {
   constructor(
     message: string,
     public statusCode: number,
-    public errorType: string
+    public errorType: string,
+    public originalError?: any
   ) {
     super(message);
     this.name = 'DeepSeekError';
@@ -105,7 +115,7 @@ export default {
       console.error('Worker error:', error);
 
       if (error instanceof DeepSeekError) {
-        return createErrorResponse(error.message, error.statusCode);
+        return createErrorResponse(error.message, error.statusCode, error.errorType);
       }
 
       return createErrorResponse('Internal server error', 500);
@@ -249,9 +259,28 @@ async function callDeepSeekAPI(chatRequest: ChatRequest, env: Env): Promise<Chat
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error?.message || `DeepSeek API error: ${response.status}`;
-      throw new DeepSeekError(errorMessage, response.status, 'DEEPSEEK_API_ERROR');
+      const errorData = await response.json().catch(() => ({})) as DeepSeekErrorResponse;
+      
+      // 处理不同类型的错误
+      let errorMessage = errorData.error?.message || `DeepSeek API error: ${response.status}`;
+      let errorType = 'DEEPSEEK_API_ERROR';
+
+      // 特殊处理余额不足错误
+      if (response.status === 402 || errorMessage.toLowerCase().includes('insufficient balance')) {
+        errorMessage = '账户余额不足，请前往 DeepSeek 平台充值后继续使用。';
+        errorType = 'INSUFFICIENT_BALANCE';
+      } else if (response.status === 401) {
+        errorMessage = 'API密钥无效，请检查配置。';
+        errorType = 'INVALID_API_KEY';
+      } else if (response.status === 429) {
+        errorMessage = '请求频率过高，请稍后重试。';
+        errorType = 'RATE_LIMIT_EXCEEDED';
+      } else if (response.status === 403) {
+        errorMessage = 'API访问被拒绝，请检查权限配置。';
+        errorType = 'ACCESS_DENIED';
+      }
+
+      throw new DeepSeekError(errorMessage, response.status, errorType, errorData);
     }
 
     const deepSeekResponse = await response.json() as DeepSeekResponse;
@@ -306,12 +335,13 @@ function createSuccessResponse(data: ChatResponse): Response {
 /**
  * 创建错误响应
  */
-function createErrorResponse(message: string, status: number): Response {
+function createErrorResponse(message: string, status: number, errorType?: string): Response {
   const errorResponse: ChatResponse = {
     reply: '',
     status: 'error',
     timestamp: new Date().toISOString(),
     error: message,
+    errorType: errorType,
   };
 
   const headers: Record<string, string> = {
