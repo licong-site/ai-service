@@ -22,3 +22,8 @@ name = "ai-service-dev"
 # [[r2_buckets]]
 # binding = "AI_FILES"
 # bucket_name = "ai-service-files"
+
+# 添加自定义域名
+[[routes]]
+pattern = "api.lcif2025.cc/*"
+zone_name = "lcif2025.cc"

@@ -21,7 +21,7 @@ wrangler --version
 
 ```bash
 # 登录 Cloudflare 账户
-wrangler auth login
+wrangler login
 ```
 
 这会打开浏览器，登录你的 Cloudflare 账户并授权。
