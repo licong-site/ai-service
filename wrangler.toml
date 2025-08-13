@@ -6,11 +6,16 @@ compatibility_flags = ["nodejs_compat"]
 # 环境变量（在 Cloudflare Dashboard 中设置实际值）
 [env.production.vars]
 # DEEPSEEK_API_KEY = "your-deepseek-api-key"  # 使用 wrangler secret 设置
-# ALLOWED_ORIGINS = "https://yourdomain.com,https://localhost:3000"
+# ALLOWED_ORIGINS = "https://lcif2025.cc,https://www.lcif2025.cc,https://localhost:3000"
 
 # 开发环境配置
 [env.development]
 name = "ai-service-dev"
+
+# 自定义域名路由配置
+[[routes]]
+pattern = "api.lcif2025.cc/*"
+zone_name = "lcif2025.cc"
 
 # KV 存储（可选，用于缓存或会话管理）
 # [[kv_namespaces]]
@@ -22,8 +27,3 @@ name = "ai-service-dev"
 # [[r2_buckets]]
 # binding = "AI_FILES"
 # bucket_name = "ai-service-files"
-
-# 添加自定义域名
-[[routes]]
-pattern = "api.lcif2025.cc/*"
-zone_name = "lcif2025.cc"
