@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "AI服务后端 - Cloudflare Worker连接DeepSeek API",
   "main": "src/index.ts",
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
@@ -11,7 +12,11 @@
     "tail:prod": "wrangler tail --env production",
     "type-check": "tsc --noEmit",
     "lint": "eslint src/**/*.ts",
-    "format": "prettier --write src/**/*.ts"
+    "format": "prettier --write src/**/*.ts",
+    "clean": "rimraf dist",
+    "prebuild": "pnpm run clean && pnpm run type-check",
+    "build": "wrangler deploy --dry-run",
+    "test": "echo \"No tests yet\" && exit 0"
   },
   "keywords": [
     "cloudflare",
@@ -21,7 +26,8 @@
     "chat",
     "api",
     "typescript",
-    "serverless"
+    "serverless",
+    "pnpm"
   ],
   "author": "向暖",
   "license": "MIT",
@@ -31,10 +37,17 @@
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
     "prettier": "^3.0.0",
+    "rimraf": "^5.0.0",
     "typescript": "^5.0.0",
     "wrangler": "^3.0.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/node": "^20.0.0"
+    }
   }
 }
