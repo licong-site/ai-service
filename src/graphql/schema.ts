@@ -1,4 +1,3 @@
-import { makeExecutableSchema } from '@graphql-tools/schema';
 
 export const typeDefs = `
   type Query {

@@ -2,7 +2,6 @@ import {
   callDeepSeekAPI, 
   DeepSeekError,
   ChatRequest,
-  ChatMessage
 } from '../deepseek';
 
 export interface Context {
@@ -58,6 +57,10 @@ export const resolvers = {
             error: 'Message or messages array is required',
             errorType: 'MISSING_MESSAGE'
           };
+        }
+
+        if (!context.env) {
+          throw new Error('Environment not available in context');
         }
 
         // 转换 GraphQL 输入为内部格式
