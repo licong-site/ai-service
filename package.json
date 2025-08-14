@@ -1,7 +1,7 @@
 {
   "name": "ai-service",
   "version": "1.0.0",
-  "description": "AI服务后端 - Cloudflare Worker连接DeepSeek API",
+  "description": "AI服务后端 - Cloudflare Worker连接DeepSeek API with GraphQL",
   "main": "src/index.ts",
   "packageManager": "pnpm@8.15.0",
   "scripts": {
@@ -25,12 +25,17 @@
     "ai",
     "chat",
     "api",
+    "graphql",
     "typescript",
     "serverless",
     "pnpm"
   ],
   "author": "向暖",
   "license": "MIT",
+  "dependencies": {
+    "graphql": "^16.8.1",
+    "graphql-yoga": "^5.1.1"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240112.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
