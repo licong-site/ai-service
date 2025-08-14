@@ -12,11 +12,6 @@ compatibility_flags = ["nodejs_compat"]
 [env.development]
 name = "ai-service-dev"
 
-# 自定义域名路由配置
-[[routes]]
-pattern = "api.lcif2025.cc/*"
-zone_name = "lcif2025.cc"
-
 # KV 存储（可选，用于缓存或会话管理）
 # [[kv_namespaces]]
 # binding = "CHAT_SESSIONS"
